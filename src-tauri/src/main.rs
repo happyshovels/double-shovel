@@ -1,17 +1,23 @@
 use serde::{Deserialize, Serialize};
-use tauri;
+use tauri::{self, Manager, State, Window};
 
 use std::sync::{Arc, Mutex};
 
 extern crate open;
 
-// #[tauri::command]
-// async fn my_command(state: tauri::State<'_, Database>, message: String) -> Result<String, String> {
-//   let counter = state.arcmut.lock().unwrap().count;
-//   println!("got message {} (counter: {})", message, counter);
+struct SplashscreenWindow(Arc<Mutex<Window>>);
+struct MainWindow(Arc<Mutex<Window>>);
 
-//   Ok(format!("star says (counter: {}): {}.", counter, message).into())
-// }
+#[tauri::command]
+fn close_splashscreen(
+  splashscreen: State<SplashscreenWindow>,
+  main: State<MainWindow>,
+) {
+  // Close splashscreen
+  splashscreen.0.lock().unwrap().close().unwrap();
+  // Show main window
+  main.0.lock().unwrap().show().unwrap();
+}
 
 #[derive(Default)]
 struct MyState {
@@ -97,10 +103,21 @@ fn get_folder_content(query_path: String) -> Result<Dir, String> {
 
 fn main() {
   tauri::Builder::default()
+    .setup(|app| {
+      // set the splashscreen and main windows to be globally available with the tauri state API
+      app.manage(SplashscreenWindow(Arc::new(Mutex::new(
+        app.get_window("splashscreen").unwrap(),
+      ))));
+      app.manage(MainWindow(Arc::new(Mutex::new(
+        app.get_window("main").unwrap(),
+      ))));
+      Ok(())
+    })
     .manage(Database::new(5))
     .invoke_handler(tauri::generate_handler![
       get_folder_content,
-      open_file
+      open_file,
+      close_splashscreen
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

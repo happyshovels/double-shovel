@@ -7,8 +7,14 @@ backend:
 
 frontend/dist:
 	cd frontend && yarn build
+	cp frontend/src/splash.html frontend/dist/splash.html
+	cp frontend/src/app-icon.png frontend/dist/app-icon.png
 
+frontend/dist/splash.html frontend/dist/app-icon.png: frontend/dist
+	cp frontend/src/$(notdir $@) $@
 
+release_frontend: frontend/dist frontend/dist/splash.html frontend/dist/app-icon.png
+	@echo "built frontend for release"
 
 src-tauri/target/release:
 	cd src-tauri/target/release
