@@ -65,17 +65,28 @@ impl Dir {
 }
 
 #[tauri::command]
-fn get_files() -> Result<Dir, String> {
-  // let paths = fs::read_dir("./").unwrap();
-
-  // for path in paths {
-  //   println!("Name: {}", path.unwrap().path().display())
-  // }
+fn get_files(path: String) -> Result<Dir, String> {
   let mut dir = Dir::new();
   dir.files = fs::read_dir("./")
     .unwrap()
     .map(|r| r.unwrap().path().into_os_string().into_string().unwrap())
     .collect::<Vec<String>>();
+  Ok(dir)
+}
+
+#[tauri::command]
+fn get_folder_content(path: String) -> Result<Dir, String> {
+  let mut dir = Dir::new();
+  // todo include some error handling
+  dir.files = fs::read_dir(path).unwrap().map(|r| {
+    r.unwrap()
+      .path()
+      .file_name()
+      .unwrap()
+      .to_str()
+      .unwrap()
+      .into()
+  }).collect::<Vec<String>>();
   Ok(dir)
 }
 
@@ -85,7 +96,8 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       my_command,
       check_my_state,
-      get_files
+      get_files,
+      get_folder_content,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

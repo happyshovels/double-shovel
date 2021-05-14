@@ -1,9 +1,9 @@
 <template>
-    <HelloWorld msg="VueJs + Tauri" />
+    <FileList />
 </template>
 
   <script>
-    import HelloWorld from './components/HelloWorld.vue'
+    import FileList from './components/FileList.vue'
 
 
 
@@ -12,7 +12,8 @@
   export default {
       name: 'App',
     components: {
-      HelloWorld
+  //    HelloWorld,
+      FileList,
     }
 }
 </script>
