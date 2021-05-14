@@ -3,13 +3,15 @@ use tauri;
 
 use std::sync::{Arc, Mutex};
 
-#[tauri::command]
-async fn my_command(state: tauri::State<'_, Database>, message: String) -> Result<String, String> {
-  let counter = state.arcmut.lock().unwrap().count;
-  println!("got message {} (counter: {})", message, counter);
+extern crate open;
 
-  Ok(format!("star says (counter: {}): {}.", counter, message).into())
-}
+// #[tauri::command]
+// async fn my_command(state: tauri::State<'_, Database>, message: String) -> Result<String, String> {
+//   let counter = state.arcmut.lock().unwrap().count;
+//   println!("got message {} (counter: {})", message, counter);
+
+//   Ok(format!("star says (counter: {}): {}.", counter, message).into())
+// }
 
 #[derive(Default)]
 struct MyState {
@@ -35,58 +37,61 @@ impl Database {
 }
 use std::fs;
 
-#[tauri::command]
-fn check_my_state(state: tauri::State<'_, Database>) {
-  //println!("state: {}", state.count);
-  let mut my_state = state.arcmut.lock().unwrap();
-  my_state.count += 1;
-  println!("state: {}", my_state.count);
-
-  let paths = fs::read_dir("./").unwrap();
-
-  for path in paths {
-    println!("Name: {}", path.unwrap().path().display())
-  }
+#[derive(Serialize, Deserialize)]
+struct DirEntry {
+  name: String,
+  entry_type: String,
 }
+
+
 
 #[derive(Serialize, Deserialize)]
 struct Dir {
-  files: std::vec::Vec<String>,
+  files: std::vec::Vec<DirEntry>,
   path: String,
 }
+
+
 
 impl Dir {
   fn new() -> Self {
     Self {
-      files: vec!["file1".into(), "file2".into(), "file3".into()],
+      files: vec![],
       path: ".".into(),
     }
   }
 }
 
 #[tauri::command]
-fn get_files(path: String) -> Result<Dir, String> {
-  let mut dir = Dir::new();
-  dir.files = fs::read_dir("./")
-    .unwrap()
-    .map(|r| r.unwrap().path().into_os_string().into_string().unwrap())
-    .collect::<Vec<String>>();
-  Ok(dir)
+fn open_file(file_path: String) -> Result<String, String> {
+
+  println!("open: {}", file_path);
+  open::that(file_path);
+  Ok("ok".into())
 }
 
 #[tauri::command]
-fn get_folder_content(path: String) -> Result<Dir, String> {
+fn get_folder_content(query_path: String) -> Result<Dir, String> {
   let mut dir = Dir::new();
   // todo include some error handling
-  dir.files = fs::read_dir(path).unwrap().map(|r| {
-    r.unwrap()
-      .path()
-      .file_name()
-      .unwrap()
-      .to_str()
-      .unwrap()
-      .into()
-  }).collect::<Vec<String>>();
+
+  let files = fs::read_dir(query_path).unwrap();
+  dir.files = files
+      .map(|r| {
+          let pathbuf = r.unwrap().path();
+
+          DirEntry {
+              name: pathbuf.file_name().unwrap().to_str().unwrap().into(),
+              entry_type: if pathbuf.is_dir() {
+                  "dir".into()
+              } else {
+                  "file".into()
+              },
+          }
+      })
+      .collect::<Vec<DirEntry>>();
+
+
   Ok(dir)
 }
 
@@ -94,10 +99,8 @@ fn main() {
   tauri::Builder::default()
     .manage(Database::new(5))
     .invoke_handler(tauri::generate_handler![
-      my_command,
-      check_my_state,
-      get_files,
       get_folder_content,
+      open_file
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
