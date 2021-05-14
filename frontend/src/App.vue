@@ -1,5 +1,5 @@
 <template>
-    <FileList />
+    <FileList /><FileList />
 </template>
 
   <script>
