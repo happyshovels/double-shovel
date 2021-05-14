@@ -23,3 +23,6 @@ open = "1.7"
 [features]
 default = [ "custom-protocol" ]
 custom-protocol = [ "tauri/custom-protocol" ]
+
+[profile.dev]
+split-debuginfo = "unpacked"

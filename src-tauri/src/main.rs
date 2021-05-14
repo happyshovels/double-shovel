@@ -5,19 +5,12 @@ use std::sync::{Arc, Mutex};
 
 extern crate open;
 
-struct SplashscreenWindow(Arc<Mutex<Window>>);
-struct MainWindow(Arc<Mutex<Window>>);
 
-#[tauri::command]
-fn close_splashscreen(
-  splashscreen: State<SplashscreenWindow>,
-  main: State<MainWindow>,
-) {
-  // Close splashscreen
-  splashscreen.0.lock().unwrap().close().unwrap();
-  // Show main window
-  main.0.lock().unwrap().show().unwrap();
-}
+
+use std::{thread, time};
+
+use std::{thread::sleep, time::Duration};
+use std::fs;
 
 #[derive(Default)]
 struct MyState {
@@ -41,7 +34,7 @@ impl Database {
     }
   }
 }
-use std::fs;
+
 
 #[derive(Serialize, Deserialize)]
 struct DirEntry {
@@ -101,24 +94,30 @@ fn get_folder_content(query_path: String) -> Result<Dir, String> {
   Ok(dir)
 }
 
+
 fn main() {
   tauri::Builder::default()
     .setup(|app| {
-      // set the splashscreen and main windows to be globally available with the tauri state API
-      app.manage(SplashscreenWindow(Arc::new(Mutex::new(
-        app.get_window("splashscreen").unwrap(),
-      ))));
-      app.manage(MainWindow(Arc::new(Mutex::new(
-        app.get_window("main").unwrap(),
-      ))));
+
+      let main_window = app.get_window("main").unwrap();
+      // we perform the initialization code on a new task so the app doesn't freeze
+      tauri::async_runtime::spawn(async move {
+        sleep(Duration::from_millis(500));
+        main_window.show().unwrap();
+      });
+
       Ok(())
     })
     .manage(Database::new(5))
     .invoke_handler(tauri::generate_handler![
       get_folder_content,
       open_file,
-      close_splashscreen
+      // close_splashscreen
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
+
+      // show_app,
+      // handle_splashscreen,
+      // close_splashscreen

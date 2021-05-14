@@ -2,12 +2,13 @@
     <FileList /><FileList />
 </template>
 
-  <script>
-    import FileList from './components/FileList.vue'
+<script>
+import FileList from './components/FileList.vue'
+//import {invoke} from '@tauri-apps/api/tauri'
 
 
-
-
+  // hack to remove the white flashing
+  //setTimeout(() => {invoke('show_app')}, 100)
 
   export default {
       name: 'App',
@@ -17,6 +18,7 @@
     }
 }
 </script>
+
 
   <style>
     #app {

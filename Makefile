@@ -7,24 +7,20 @@ backend:
 
 frontend/dist:
 	cd frontend && yarn build
-	cp frontend/src/splash.html frontend/dist/splash.html
-	cp frontend/src/app-icon.png frontend/dist/app-icon.png
 
-frontend/dist/splash.html frontend/dist/app-icon.png: frontend/dist
-	cp frontend/src/$(notdir $@) $@
 
-release_frontend: frontend/dist frontend/dist/splash.html frontend/dist/app-icon.png
+release_frontend: frontend/dist
 	@echo "built frontend for release"
 
 src-tauri/target/release:
 	cd src-tauri/target/release
 
 release: frontend/dist
-	cd src-tauri/target/release && yarn tauri build
+	cd src-tauri && yarn tauri build
 	echo ""
 
-#launch_release:
-#	open 
+run:
+	@./src-tauri/target/debug/double-shovel
 
 .PHONY: clean clean_frontend release 
 clean: clean_frontend

@@ -84,7 +84,7 @@ export default {
       this.update_files();
     }.bind(this), 1000);  
 
-    setTimeout(() => {invoke('close_splashscreen')}, 1000)
+    //setTimeout(() => {invoke('close_splashscreen')}, 1000)
 
   }
   
