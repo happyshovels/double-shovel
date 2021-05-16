@@ -1,6 +1,9 @@
 <template>
   <div class="file-list">
-    <input class="current-folder" v-model="path" placeholder="current directory" readonly />
+    <input v-on:keyup="onKey"/>
+    <p>counter: {{counter}}</p>
+    <p>{{message}}</p><br>
+    <input class="current-folder" v-model="path" placeholder="current directory" readonly/>
     <ul class="file-directory">
         <li class="file-name dir" @click="file_list_click(file, 'parent')">..</li>
         <li class="file-name dir" @click="file_list_click(file.name, 'folder')" v-for="file in files.filter(f => f.entry_type == 'dir')" :key="file.name">
@@ -27,12 +30,28 @@ export default {
       timer: null,
       clicks: 0,
       double_click_delay: 500,
+      message: ''
     }
   },
+
+
   computed: {
+    counter () {
+      return this.$store.state.count
+    }
   }, 
   methods: {
-    update_files: function() {
+    onKey: function() {
+      console.log('bla')
+      if (event.key === "Escape") {
+        this.message = "Escape has been pressed";
+      } else {
+        this.message = "another key has been pressed";
+      }
+
+      console.log(event)
+    },
+    update_files: function() { 
       invoke('get_folder_content', {queryPath: this.path}).then((response) => { 
         //console.log(response.files)
         this.files = response.files
@@ -83,9 +102,6 @@ export default {
     setInterval(function () {
       this.update_files();
     }.bind(this), 1000);  
-
-    //setTimeout(() => {invoke('close_splashscreen')}, 1000)
-
   }
   
 }

@@ -10,12 +10,65 @@ import FileList from './components/FileList.vue'
   // hack to remove the white flashing
   //setTimeout(() => {invoke('show_app')}, 100)
 
+
+
+// Single key
+// hotkeys('a,command+r', function (event) {
+//     //event.srcElement: input 
+//     //event.target: input
+//     if (event.target === "input") {
+//         alert('you pressed a!')
+//     }
+//     alert('you pressed a!')
+//     event.preventDefault()
+// });
+
+
+
+
+// hotkeys('*', function() {
+//   if (hotkeys.shift) {
+//     console.log('shift is pressed!');
+//   }
+
+//   if (hotkeys.ctrl) {
+//     console.log('ctrl is pressed!');
+//   }
+
+//   if (hotkeys.alt) {
+//     console.log('alt is pressed!');
+//   }
+
+//   if (hotkeys.option) {
+//     console.log('option is pressed!');
+//   }
+
+//   if (hotkeys.control) {
+//     console.log('control is pressed!');
+//   }
+
+//   if (hotkeys.cmd) {
+//     console.log('cmd is pressed!');
+//   }
+
+//   if (hotkeys.command) {
+//     console.log('command is pressed!');
+//   }
+//   console.log(hotkeys.getPressedKeyCodes())
+// });
+
+
+
   export default {
       name: 'App',
     components: {
   //    HelloWorld,
       FileList,
-    }
+    },
+
+
+
+    
 }
 </script>
 
