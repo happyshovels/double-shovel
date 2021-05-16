@@ -7,7 +7,9 @@ import hotkeys from 'hotkeys-js';
 const store = createStore({
     state() {
         return {
-            count: 0
+            count: 0,
+            showCommandWindow: false,
+            lastCommand: '',
         }
     },
     actions: {
@@ -16,6 +18,12 @@ const store = createStore({
         },
         decrement({ commit }) {
             commit('decrement')
+        },
+        toggleCommandWindow({ commit }) {
+            commit('toggleCommandWindow')
+        },
+        executeCommand({ commit }, command) {
+            commit('setLastCommand', command)
         }
     },
 
@@ -25,6 +33,12 @@ const store = createStore({
         },
         decrement(state) {
             state.count--
+        },
+        toggleCommandWindow(state) {
+            state.showCommandWindow = !state.showCommandWindow
+        },
+        setLastCommand(state, command) {
+            state.lastCommand = command
         }
     }
 })
@@ -39,6 +53,11 @@ hotkeys('up', function (event) {
 
 hotkeys('down', function (event) {
     store.dispatch('decrement');
+    event.preventDefault();
+});
+
+hotkeys('command+shift+p', function (event) {
+    store.dispatch('toggleCommandWindow');
     event.preventDefault();
 });
 

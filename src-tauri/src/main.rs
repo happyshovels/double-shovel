@@ -102,7 +102,7 @@ fn main() {
       let main_window = app.get_window("main").unwrap();
       // we perform the initialization code on a new task so the app doesn't freeze
       tauri::async_runtime::spawn(async move {
-        sleep(Duration::from_millis(500));
+        sleep(Duration::from_millis(700));
         main_window.show().unwrap();
       });
 

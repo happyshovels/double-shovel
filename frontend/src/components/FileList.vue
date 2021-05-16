@@ -1,7 +1,8 @@
 <template>
   <div class="file-list">
-    <input v-on:keyup="onKey"/>
+    <!-- <input v-on:keyup="onKey"/> -->
     <p>counter: {{counter}}</p>
+    <p>last command: {{lastCommand}} </p>
     <p>{{message}}</p><br>
     <input class="current-folder" v-model="path" placeholder="current directory" readonly/>
     <ul class="file-directory">
@@ -38,19 +39,22 @@ export default {
   computed: {
     counter () {
       return this.$store.state.count
+    },
+    lastCommand() {
+      return this.$store.state.lastCommand
     }
   }, 
   methods: {
-    onKey: function() {
-      console.log('bla')
-      if (event.key === "Escape") {
-        this.message = "Escape has been pressed";
-      } else {
-        this.message = "another key has been pressed";
-      }
+    // onKey: function() {
+    //   console.log('bla')
+    //   if (event.key === "Escape") {
+    //     this.message = "Escape has been pressed";
+    //   } else {
+    //     this.message = "another key has been pressed";
+    //   }
 
-      console.log(event)
-    },
+    //   console.log(event)
+    // },
     update_files: function() { 
       invoke('get_folder_content', {queryPath: this.path}).then((response) => { 
         //console.log(response.files)

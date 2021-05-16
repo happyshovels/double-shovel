@@ -1,8 +1,10 @@
 <template>
+    <CommandWindow />
     <FileList /><FileList />
 </template>
 
 <script>
+import CommandWindow from './components/CommandWindow.vue'
 import FileList from './components/FileList.vue'
 //import {invoke} from '@tauri-apps/api/tauri'
 
@@ -62,7 +64,7 @@ import FileList from './components/FileList.vue'
   export default {
       name: 'App',
     components: {
-  //    HelloWorld,
+      CommandWindow,
       FileList,
     },
 
