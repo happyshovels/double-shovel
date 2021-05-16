@@ -63,7 +63,7 @@ impl Dir {
 
 #[tauri::command]
 fn close_application(window: tauri::Window) {
-  println!("Closing program {}", window.label());
+  println!("Closing the Application.");
   window.close().unwrap();
 }
 
