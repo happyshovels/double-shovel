@@ -26,7 +26,7 @@ export default {
   name: 'FileList',
   data() {
     return {
-      path: '/Users/lukas/projects' ,
+      path: '/Users' ,
       files: [],
       timer: null,
       clicks: 0,
