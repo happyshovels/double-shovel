@@ -4,6 +4,9 @@ import { createStore } from 'vuex'
 import App from './App.vue'
 import hotkeys from 'hotkeys-js';
 
+import { invoke } from '@tauri-apps/api/tauri'
+
+
 const store = createStore({
     state() {
         return {
@@ -24,6 +27,9 @@ const store = createStore({
         },
         executeCommand({ commit }, command) {
             commit('setLastCommand', command)
+        },
+        closeApp() {
+            invoke('close_application')
         }
     },
 
@@ -60,6 +66,12 @@ hotkeys('command+shift+p', function (event) {
     store.dispatch('toggleCommandWindow');
     event.preventDefault();
 });
+
+hotkeys('command+q', function (event) {
+    store.dispatch('closeApp');
+    event.preventDefault();
+});
+
 
 
 

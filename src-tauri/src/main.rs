@@ -62,6 +62,12 @@ impl Dir {
 }
 
 #[tauri::command]
+fn close_application(window: tauri::Window) {
+  println!("Closing program {}", window.label());
+  window.close().unwrap();
+}
+
+#[tauri::command]
 fn open_file(file_path: String) -> Result<String, String> {
 
   println!("open: {}", file_path);
@@ -112,6 +118,7 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       get_folder_content,
       open_file,
+      close_application,
       // close_splashscreen
     ])
     .run(tauri::generate_context!())
